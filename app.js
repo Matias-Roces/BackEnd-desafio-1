@@ -3,57 +3,120 @@ class ProductManager {
     constructor() {
         this.products = []
     }
-    addProduct(productName, productDescription, productPrice, productThumbnail, productCode, productStock = 0) {
-        const validProduct = productName && productDescription && productPrice && productThumbnail && productCode
-        console.log(validProduct)
-        if (!validProduct) {
+    // return a boolean validating a product attributes
+    validProduct(product) {
+        return (
+            product.title &&
+            product.description &&
+            product.price &&
+            product.thumbnail &&
+            product.code &&
+            product.stock
+        )
+    }
+    addProduct(product) {
+        // ask if it was wrote all the required data
+        if (!this.validProduct(product)) {
+            // if isnt valid, show an error
             console.error(`Error: Some of data products is missing, please fill all the data of the new product`)
-            return
+        } else {
+            //ask if it the code is repeated
+            const codeFinder = this.products.find((prod) => prod.code === product.code)
+            if (codeFinder) {
+                //if the code is repeated, show an error
+                console.error(`The code ${product.code} is already in use. Please select another code for this product. `)
+            } else {
+                // if all valid, set the id by the length of the array and push the product object
+                const productId = this.products.length + 1
+                product.id = productId
+                this.products.push(product)
+                console.log(`The product was added correctly.`)
+            }
         }
-        const codeFinder = this.products.find((product) => product.code === productCode)
-        if (codeFinder) {
-            console.error(`The code ${productCode} is already in use. Please select another code for this product. `)
-            return
-        }
-
-        const productId = this.products.length + 1
-        const producto = {
-            id: productId,
-            title: productName,
-            description: productDescription,
-            price: productPrice,
-            thumbnail: productThumbnail,
-            code: productCode,
-            stock: productStock
-        }
-
-        this.products.push(producto)
-        console.log(`The product was added correctly.`)
     }
     getProducts() {
         return this.products
     }
     getProductById(productId) {
-        const productFinder = this.products.find((product) => product.id === productId)
-        if (!productFinder) {
-            console.error("Not found.")
-            return
+        //ask to the array if some product has the id
+        const productFinded = this.products.find((prod) => prod.id === productId)
+        if (productFinded) {
+            // return the product with that id
+            return productFinded
         }
-        console.log(`The product with the id number ${productId} is ${productFinder.title}`)
+        else {
+            // if not found, show this error
+            console.error("Not found.")
+        }
     }
 }
-// Program function testing
-const productManager = new ProductManager()
-productManager.addProduct("Banana", "From Ecuador", 400, "22", 70)
-productManager.addProduct("Banana", "From Ecuador", 400, "this is a route", "22", 70)
-productManager.addProduct("Apple", "Gaucho", 700, "this is a route", "22", 50)
-productManager.addProduct("Apple", "Gaucho", 700, "this is a route", "23", 50)
-productManager.addProduct("Orange", "Juicy", 350, "this is a route", "30", 120)
-productManager.addProduct("Tomatoe", "Rounded", 600, "this is a route", "5", 55)
 
+// Program testing
+const productManager = new ProductManager()
+//incomplete product
+productManager.addProduct({
+    title: "Banana",
+    description: "Ecuador",
+    price: 400,
+    thumbnail: 'ruta/bananaE.jpg',
+    code: 'P001'
+})
+//complete products
+productManager.addProduct({
+    title: "Banana",
+    description: "Ecuador",
+    price: 400,
+    thumbnail: 'ruta/bananaE.jpg',
+    code: 'P001',
+    stock: 50
+})
+//complete but repeating code
+productManager.addProduct({
+    title: "Apple",
+    description: "Gaucho",
+    price: 600,
+    thumbnail: 'ruta/appleG.jpg',
+    code: 'P001',
+    stock: 60
+})
+productManager.addProduct({
+    title: "Apple",
+    description: "Gaucho",
+    price: 600,
+    thumbnail: 'ruta/appleG.jpg',
+    code: 'P002',
+    stock: 60
+})
+productManager.addProduct({
+    title: "Orange",
+    description: "Juicy",
+    price: 350,
+    thumbnail: 'ruta/orange.jpg',
+    code: 'P003',
+    stock: 45
+})
+productManager.addProduct({
+    title: "Tomatoe",
+    description: "Rounded",
+    price: 480,
+    thumbnail: 'ruta/tomatoe.jpg',
+    code: 'P004',
+    stock: 20
+})
+
+// save the array of products in "allProducts and show it"
 const allProducts = productManager.getProducts()
 console.log(allProducts)
 
-productManager.getProductById(2)
-productManager.getProductById(6)
+// get Products by Id and show them if they are in the main array
+const product1 = productManager.getProductById(1)
+if (product1)
+    console.log(`The product which id is 1 is ${product1.title}`)
 
+const product2 = productManager.getProductById(2)
+if (product2)
+    console.log(`The product which id is 2 is${product2.title}`)
+//id that doesnt exist to check the error
+const product3 = productManager.getProductById(8)
+if (product3)
+    console.log(`The product which id is 2 is${product3.title}`)
